@@ -1,6 +1,7 @@
 
 from flask import Flask, render_template, jsonify
-from trader import *  # Assuming this is your module name
+from classes.trader import *  # Assuming this is your module name
+from classes.market import *
 
 app = Flask(__name__)
 
