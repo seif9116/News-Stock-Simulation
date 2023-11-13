@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Market Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <canvas id="stockChart"></canvas>
+    <button onclick="refreshSimulation()">Refresh Simulation</button>
+
+    <script>
+        var ctx = document.getElementById('stockChart').getContext('2d');
+        var stockChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: []
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        function refreshSimulation() {
+            $.getJSON('/simulate', function(data) {
+                var newDataset = {
+                    label: 'Simulation ' + (stockChart.data.datasets.length + 1),
+                    data: data,
+                    fill: false,
+                    borderColor: randomColor(),  // Implement a function to get random colors
+                    tension: 0.1
+                };
+                stockChart.data.datasets.push(newDataset);
+                stockChart.update();
+            });
+        }
+
+        function randomColor() {
+            // Generate and return a random color
+        }
+    </script>
+</body>
+</html>
+
