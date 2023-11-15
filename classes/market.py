@@ -21,9 +21,9 @@ class MarketModel:
 
     def execute_orders(self):
         while self.buy_orders and self.sell_orders and self.buy_orders[-1] >= self.sell_orders[0]:
-            self.update_stock_price()
             self.buy_orders.pop()
             self.sell_orders.pop(0)
+            self.update_stock_price()
 
     def simulate_market(self):
         for day in range(self.time_steps):

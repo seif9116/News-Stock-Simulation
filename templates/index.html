@@ -32,7 +32,12 @@
 
     function refreshSimulation() {
         $.getJSON('/simulate', function(data) {
-            var stockData = data.stockPrices; // Adjust based on actual data structure
+            var stockData = {
+                label: 'Stock Prices',
+                data: data.stockPrices,
+                borderColor: '#007bff',
+                fill:false
+            };
 
             var stockDataset = {
                 label: 'Stock Prices',
