@@ -12,8 +12,8 @@ def index():
 @app.route('/simulate')
 def simulate():
     market = MarketModel()
-    market.collect_and_execute_orders()
-    data = market.get_time_series()  # This will now work as expected
+    market.simulate_market()  # Run the market simulation for the defined number of time steps
+    data = market.get_time_series()  # Get the time series data after the simulation
     return jsonify(data)
 
 if __name__ == '__main__':
