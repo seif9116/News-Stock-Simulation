@@ -1,6 +1,7 @@
 import numpy as np
 import bisect
 
+
 class TraderModel:
     def __init__(self):
         self.kt = 0 # knowledge of news
@@ -29,6 +30,6 @@ class TraderModel:
 
 
 # Example usage
-market = MarketModel()
-market.collect_and_execute_orders()
-print(f"Current Stock Price: {market.stock_price}")
+#market = MarketModel()
+#market.collect_and_execute_orders()
+#print(f"Current Stock Price: {market.stock_price}")
