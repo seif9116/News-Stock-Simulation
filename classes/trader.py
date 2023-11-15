@@ -1,14 +1,16 @@
 import numpy as np
+MULTIPLIER = 3
 
 class TraderModel:
-    def __init__(self):
+    def __init__(self, index):
+        self.index = index
         self.kt = 0 # knowledge of news
-        self.st = np.random.uniform(0, 1) # sensitivity to news
+        self.st = np.random.beta(a=2, b=1) # sensitivity to news
         self.pvos = np.random.normal(100, 10) # perceived value of stock
         self.lop = 0.8 # p0, limit order probability
 
     def update_perceived_value(self, news_magnitude=0):
-        self.pvos -= self.st * self.kt * news_magnitude
+        self.pvos += self.st * self.kt * news_magnitude * MULTIPLIER
         self.pvos += np.random.normal(0, 5)
 
     def decide_order(self):
@@ -24,3 +26,9 @@ class TraderModel:
             return order_type, order_price
         else:
             return 'pass', None  # Return a 'pass' action when not placing an order
+    def receive_news(self, news_magnitude):
+        if news_magnitude != 0:
+            self.kt = 1
+            self.update_perceived_value(news_magnitude)
+        else:
+            self.kt = 0

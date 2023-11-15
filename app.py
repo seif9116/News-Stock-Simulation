@@ -12,9 +12,12 @@ def index():
 @app.route('/simulate')
 def simulate():
     market = MarketModel()
-    market.simulate_market()  # Run the market simulation for the defined number of time steps
-    data = market.get_time_series()  # Get the time series data after the simulation
-    return jsonify(data)
+    market.simulate_market()
+    data = market.get_time_series()  # This should return the time series data
 
+    # Format data for Chart.js (assuming data is a list of stock prices)
+    formatted_data = [{"x": day, "y": price} for day, price in enumerate(data, start=1)]
+
+    return jsonify({"stockPrices": formatted_data})
 if __name__ == '__main__':
     app.run(debug=True)

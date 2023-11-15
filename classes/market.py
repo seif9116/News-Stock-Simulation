@@ -1,14 +1,16 @@
 import bisect
 from classes.trader import TraderModel
+from classes.news import NewsSpreadModel
 
 class MarketModel:
     def __init__(self, num_traders=1000, time_steps=100):
-        self.traders = [TraderModel() for _ in range(num_traders)]
+        self.traders = [TraderModel(index=i) for i in range(num_traders)]
         self.stock_price = 100
         self.buy_orders = []
         self.sell_orders = []
         self.stock_price_history = []
         self.time_steps = time_steps
+        self.news_model = NewsSpreadModel(num_traders=num_traders)
 
     def update_stock_price(self):
         if self.buy_orders and self.sell_orders:
@@ -24,7 +26,16 @@ class MarketModel:
             self.sell_orders.pop(0)
 
     def simulate_market(self):
-        for _ in range(self.time_steps):
+        for day in range(self.time_steps):
+            if day == 50:
+                # Start the news spread from a single random location on day 50
+                self.news_model.start_news_at_random_location()
+            if day >= 50:
+                # From day 50 onwards, continue spreading the news
+                self.news_model.spread_news()
+                news_magnitude = -1 
+                for trader in self.traders:
+                    trader.receive_news(news_magnitude if self.news_model.news_states[trader.index]==1 else 0)
             self.collect_and_execute_orders()
             self.update_stock_price()  # Ensure stock price is updated every time step
 

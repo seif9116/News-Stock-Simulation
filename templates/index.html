@@ -10,41 +10,53 @@
     <canvas id="stockChart"></canvas>
     <button onclick="refreshSimulation()">Refresh Simulation</button>
 
-    <script>
-        var ctx = document.getElementById('stockChart').getContext('2d');
-        var stockChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: []
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom'
-                    }
+<script>
+    var ctx = document.getElementById('stockChart').getContext('2d');
+    var stockChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: []
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                },
+                y: {
+                    beginAtZero: true  // Adjust as needed for your scale
                 }
             }
+        }
+    });
+
+    function refreshSimulation() {
+        $.getJSON('/simulate', function(data) {
+            var stockData = data.stockPrices; // Adjust based on actual data structure
+
+            var stockDataset = {
+                label: 'Stock Prices',
+                data: stockData,
+                borderColor: '#007bff', // Example color
+                fill: false
+            };
+
+            var redLineDataset = {
+                label: 'News Spread Day',
+                borderColor: 'red',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                data: [{x: 50, y: 0}, {x: 50, y: 200}],
+                type: 'line',
+                order: 0
+            };
+
+            stockChart.data.datasets = [stockDataset, redLineDataset];
+            stockChart.update();
         });
-
-        function refreshSimulation() {
-            $.getJSON('/simulate', function(data) {
-                var newDataset = {
-                    label: 'Simulation ' + (stockChart.data.datasets.length + 1),
-                    data: data,
-                    fill: false,
-                    borderColor: randomColor(),  // Implement a function to get random colors
-                    tension: 0.1
-                };
-                stockChart.data.datasets.push(newDataset);
-                stockChart.update();
-            });
-        }
-
-        function randomColor() {
-            // Generate and return a random color
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
 
