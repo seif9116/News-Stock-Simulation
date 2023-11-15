@@ -30,37 +30,47 @@
         }
     });
 
-    function refreshSimulation() {
-        $.getJSON('/simulate', function(data) {
-            var stockData = {
-                label: 'Stock Prices',
-                data: data.stockPrices,
-                borderColor: '#007bff',
-                fill:false
-            };
 
-            var stockDataset = {
-                label: 'Stock Prices',
-                data: stockData,
-                borderColor: '#007bff', // Example color
-                fill: false
-            };
+function refreshSimulation() {
+    $.getJSON('/simulate', function(data) {
+        var newColor;
+        var datasetLength = stockChart.data.datasets.length;
 
-            var redLineDataset = {
+        // If this is the first simulation, use blue. Otherwise, use gray.
+        if (datasetLength === 0 || (datasetLength === 1 && stockChart.data.datasets[0].label === 'News Spread Day')) {
+            newColor = '#007bff'; // Blue for the first simulation
+        } else {
+            newColor = '#808080'; // Gray for subsequent simulations
+        }
+
+        var stockData = {
+            label: 'Stock Prices ' + (datasetLength + 1), // Unique label for each dataset
+            data: data.stockPrices,
+            borderColor: newColor,
+            fill: false
+        };
+
+        // Retain the red line dataset if it's already in the chart
+        var redLineDataset = stockChart.data.datasets.find(d => d.label === 'News Spread Day');
+        if (!redLineDataset) {
+            redLineDataset = {
                 label: 'News Spread Day',
                 borderColor: 'red',
                 borderWidth: 2,
                 pointRadius: 0,
                 fill: false,
-                data: [{x: 50, y: 0}, {x: 50, y: 200}],
+                data: [{x: 50, y: 0}, {x: 50, y: 150}],
                 type: 'line',
                 order: 0
             };
+            stockChart.data.datasets.push(redLineDataset);
+        }
 
-            stockChart.data.datasets = [stockDataset, redLineDataset];
-            stockChart.update();
-        });
-    }
+        // Add the new stock data dataset
+        stockChart.data.datasets.push(stockData);
+        stockChart.update();
+    });
+}
 </script>
 </body>
 </html>

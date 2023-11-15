@@ -1,5 +1,5 @@
 import numpy as np
-MULTIPLIER = 3
+MULTIPLIER = 2
 
 class TraderModel:
     def __init__(self, index):
