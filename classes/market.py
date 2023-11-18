@@ -25,6 +25,11 @@ class MarketModel:
             self.sell_orders.pop(0)
             self.update_stock_price()
 
+    def get_current_price(self):
+        if not self.stock_price_history:
+            return 100
+        else:
+            return self.stock_price_history[-1]
     def simulate_market(self):
         for day in range(self.time_steps):
             if day == 50:
@@ -35,17 +40,24 @@ class MarketModel:
                 self.news_model.spread_news()
                 news_magnitude = -1 
                 for trader in self.traders:
-                    trader.receive_news(news_magnitude if self.news_model.news_states[trader.index]==1 else 0)
+                    trader.receive_news(
+                            news_magnitude if self.news_model.news_states[trader.index]==1 else 0,
+                            self.get_current_price())
             self.collect_and_execute_orders()
             self.update_stock_price()  # Ensure stock price is updated every time step
 
     def collect_and_execute_orders(self):
         for trader in self.traders:
-            order_type, order_price = trader.place_limit_order()
+            order_type, order_price = trader.place_limit_order(self.get_current_price())
             if order_type == 'buy':
                 bisect.insort(self.buy_orders, order_price)
             elif order_type == 'sell':
                 bisect.insort(self.sell_orders, order_price)
+        self.execute_orders()
+        print(self.buy_orders[-5:], 
+                      self.buy_orders[:5],
+                      self.sell_orders[-5:],
+                      self.sell_orders[:5])
 
     def get_time_series(self):
         return [{'x': index, 'y': price} for index, price in enumerate(self.stock_price_history)]

@@ -10,9 +10,9 @@ class NewsSpreadModel:
 
     def start_news_at_random_location(self):
         """Start the news from a single random location among the traders."""
-        random_index = np.random.randint(self.num_traders)  # Choose a random trader to start the news
-        self.news_states[random_index] = 1  # Update the news state of the chosen trader
-
+        #random_index = np.random.randint(self.num_traders)  # Choose a random trader to start the news
+        #self.news_states[random_index] = 1  # Update the news state of the chosen trader
+        self.news_states = np.random.binomial(1, 0.1, self.num_traders)
     def _get_neighbors(self, index):
         """Get neighboring indices for a trader considering a circular topology."""
         # Calculate indices of neighboring traders within the radius
