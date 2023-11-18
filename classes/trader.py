@@ -1,17 +1,19 @@
 import numpy as np
-MULTIPLIER = 10
+MULTIPLIER = 13
 
 class TraderModel:
     def __init__(self, index):
         self.index = index
         self.kt = 0 # knowledge of news
         self.st = np.random.beta(a=2, b=1) # sensitivity to news
-        self.pvos = np.random.normal(100, 10) # perceived value of stock
+        self.pvos = np.random.normal(100, 15) # perceived value of stock
         self.lop = 0.8 # p0, limit order probability
 
     def update_perceived_value(self, current_price, news_magnitude=0):
         self.pvos += self.st * self.kt * news_magnitude * MULTIPLIER
-        self.pvos += np.random.normal((current_price - self.pvos)*0.05, 20)
+        # inspired from Ohrnstein Uhnbleck Process, include mean reversion 
+        # tendencies for pvos 
+        self.pvos += np.random.normal((current_price - self.pvos)*0.09, 10)
 
     def decide_order(self):
         # Random Bernoulli trial with self.lop probability

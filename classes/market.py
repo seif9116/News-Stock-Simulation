@@ -1,9 +1,11 @@
+import numpy as np
 import bisect
 from classes.trader import TraderModel
 from classes.news import NewsSpreadModel
 
+#NEWS_MAGNITUDE = -1
 class MarketModel:
-    def __init__(self, num_traders=1000, time_steps=100):
+    def __init__(self, num_traders=1000, time_steps=115):
         self.traders = [TraderModel(index=i) for i in range(num_traders)]
         self.stock_price = 100
         self.buy_orders = []
@@ -16,21 +18,22 @@ class MarketModel:
         if self.buy_orders and self.sell_orders:
             highest_buy = self.buy_orders[-1]
             lowest_sell = self.sell_orders[0]
-            self.stock_price = (highest_buy + lowest_sell) / 2
+            market_shock = np.random.normal(0,3) # include stochasticity into the price of market
+            self.stock_price = (highest_buy + lowest_sell) / 2 + market_shock
         self.stock_price_history.append(self.stock_price)
 
     def execute_orders(self):
         while self.buy_orders and self.sell_orders and self.buy_orders[-1] >= self.sell_orders[0]:
             self.buy_orders.pop()
             self.sell_orders.pop(0)
-            self.update_stock_price()
+#            self.update_stock_price()
 
     def get_current_price(self):
         if not self.stock_price_history:
             return 100
         else:
             return self.stock_price_history[-1]
-    def simulate_market(self):
+    def simulate_market(self, news_magnitude=-1):
         for day in range(self.time_steps):
             if day == 50:
                 # Start the news spread from a single random location on day 50
@@ -38,7 +41,7 @@ class MarketModel:
             if day >= 50:
                 # From day 50 onwards, continue spreading the news
                 self.news_model.spread_news()
-                news_magnitude = -1 
+               # news_magnitude = -1 
                 for trader in self.traders:
                     trader.receive_news(
                             news_magnitude if self.news_model.news_states[trader.index]==1 else 0,
